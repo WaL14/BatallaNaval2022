@@ -1,4 +1,6 @@
 import os
+import random
+
 
 tableroJugador = []
 tableroAtaqueJugador = []
@@ -207,15 +209,15 @@ def imprimir_tablero(tablero):
 	for i in range(len(tablero)):
 		print("%3s |" % (letras[i]), end="") # Row nums
 		for j in range(len(tablero[0])):
-			print("%5d " % (tablero[i][j]), end="")
+			print("%5s " % (str(tablero[i][j])), end="")
 		print()
 
 def movimiento_pc(tablero_enemigo):
 	movimiento = []
 	while movimiento == []:
-		fila = randint(0, 9)
-		columna = randint(0, 9)
-		if tablero[fila][columna] != "X":
+		fila = random.randint(0, 9)
+		columna = random.randint(0, 9)
+		if tablero_enemigo[fila][columna] != "X":
 			movimiento = [fila,columna]
 	return movimiento
 	
@@ -226,32 +228,62 @@ def movimiento_jugador(tablero_enemigo):
 		# https://itsmycode.com/convert-letters-to-numbers-in-python/#:~:text=We%20can%20convert%20letters%20to%20numbers%20in%20Python%20using%20the,convert%20each%20letter%20into%20number.
 		fila = ord(jugada[0]) - 65 
 		columna = int(jugada[1])
-		if tablero[fila][columna] != "X":
+		if tablero_enemigo[fila][columna] != "X":
 			movimiento = [fila,columna]
 		else:
 			print("Esa casilla ya fue atacada")	
 	return movimiento
 	
+def tablero_sin_barcos(tablero):
+	for fila in tablero:
+		for item in fila:
+			if item in["P","L","S","C","0","B"]:
+				return False
+	return True
 
 def jugar():
-    llenar_tableros()
-    leer_archivo_CPU()
-    pedir_portaviones()
-    print("Posiciones ocupadas: ")
-    print(listaPosicionesOcupadas)	
-    pedir_battleship()
-    print("Posiciones ocupadas: ")
-    print(listaPosicionesOcupadas)	
-    pedir_crucero()
-    print("Posiciones ocupadas: ")
-    print(listaPosicionesOcupadas)
-    pedir_submarino()
-    print("Posiciones ocupadas: ")
-    print(listaPosicionesOcupadas)
-    pedir_lancha()
-    cargar_tablero_jugador()
-    #imprimir_tablero(tableroJugador)
-    #print(tableroCPU)
+	llenar_tableros()
+	leer_archivo_CPU()
+	pedir_portaviones()
+	print("Posiciones ocupadas: ")
+	print(listaPosicionesOcupadas)	
+	pedir_battleship()
+	print("Posiciones ocupadas: ")
+	print(listaPosicionesOcupadas)	
+	pedir_crucero()
+	print("Posiciones ocupadas: ")
+	print(listaPosicionesOcupadas)
+	pedir_submarino()
+	print("Posiciones ocupadas: ")
+	print(listaPosicionesOcupadas)
+	pedir_lancha()
+	cargar_tablero_jugador()
+	
+	jugador_gana = False
+	CPU_gana = False
+	
+	orden = random.randint(0, 1)
+	if orden == 0:
+		print("*** Inicia el Jugador ***")
+	else:
+		print("*** Inicia la PC ***")
+    
+	while jugador_gana == False and CPU_gana == False:
+		if orden == 0:
+			movimiento_jugador(tableroAtaqueJugador)
+			movimiento_pc(tableroJugador)
+		else:
+			movimiento_pc(tableroJugador)
+			movimiento_jugador(tableroAtaqueJugador)
+			
+		print("Tablero defensivo Jugador")
+		imprimir_tablero(tableroJugador)
+		print()
+		print()	
+		print("Tablero de Ataque Jugador")
+		imprimir_tablero(tableroAtaqueJugador)
+		
+		jugador_gana = tablero_sin_barcos(tableroCPU)
+		CPU_gana = tablero_sin_barcos(tableroJugador)
 
 jugar()
-       
