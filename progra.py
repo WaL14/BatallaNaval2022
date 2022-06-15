@@ -212,27 +212,50 @@ def imprimir_tablero(tablero):
 			print("%5s " % (str(tablero[i][j])), end="")
 		print()
 
-def movimiento_pc(tablero_enemigo):
+def movimiento_pc():
 	movimiento = []
 	while movimiento == []:
 		fila = random.randint(0, 9)
 		columna = random.randint(0, 9)
-		if tablero_enemigo[fila][columna] != "X":
+		if tableroJugador[fila][columna] not in ["X", "A"]:
 			movimiento = [fila,columna]
-	return movimiento
 	
-def movimiento_jugador(tablero_enemigo):
+	print("PC ataca a " + listaFilas[fila] + listaColumnas[columna])
+	
+	if tableroJugador[movimiento[0]][movimiento[1]] in ["P","L","S","C","0","B"]:
+		print("Acierto")
+		tableroJugador[movimiento[0]][movimiento[1]] = "A"
+	else:
+		print("Fallo")
+		tableroJugador[movimiento[0]][movimiento[1]] = "X"
+		
+	print()
+	
+def movimiento_jugador():
 	movimiento = []
 	while movimiento == []:
 		jugada = input("Ingrese la coordenada a atacar: ")
+		if len(jugada) != 2 or jugada[0] not in listaFilas or jugada[1] not in listaColumnas:
+			print("Coordinada Invalida")
+			continue
 		# https://itsmycode.com/convert-letters-to-numbers-in-python/#:~:text=We%20can%20convert%20letters%20to%20numbers%20in%20Python%20using%20the,convert%20each%20letter%20into%20number.
 		fila = ord(jugada[0]) - 65 
 		columna = int(jugada[1])
-		if tablero_enemigo[fila][columna] != "X":
+		if tableroAtaqueJugador[fila][columna] not in ["X", "A"]:
 			movimiento = [fila,columna]
 		else:
 			print("Esa casilla ya fue atacada")	
-	return movimiento
+			
+	if tableroCPU[movimiento[0]][movimiento[1]] in ["P","L","S","C","0","B"]:
+		print("Acierto")
+		tableroCPU[movimiento[0]][movimiento[1]] = "A"
+		tableroAtaqueJugador[movimiento[0]][movimiento[1]] = "A"
+	else:
+		print("Fallo")
+		tableroCPU[movimiento[0]][movimiento[1]] = "X"
+		tableroAtaqueJugador[movimiento[0]][movimiento[1]] = "X"
+		
+	print()
 	
 def tablero_sin_barcos(tablero):
 	for fila in tablero:
@@ -270,11 +293,12 @@ def jugar():
     
 	while jugador_gana == False and CPU_gana == False:
 		if orden == 0:
-			movimiento_jugador(tableroAtaqueJugador)
-			movimiento_pc(tableroJugador)
+			movimiento_jugador()
+			movimiento_pc()
 		else:
-			movimiento_pc(tableroJugador)
-			movimiento_jugador(tableroAtaqueJugador)
+			movimiento_pc()
+			movimiento_jugador()
+			
 			
 		print("Tablero defensivo Jugador")
 		imprimir_tablero(tableroJugador)
@@ -285,5 +309,17 @@ def jugar():
 		
 		jugador_gana = tablero_sin_barcos(tableroCPU)
 		CPU_gana = tablero_sin_barcos(tableroJugador)
+		
+	if jugador_gana and CPU_gana:
+		print("Empate!")
+	elif jugador_gana:
+		print("Jugador gana!")
+	elif CPU_gana:
+		print("CPU gana!")
 
-jugar()
+while(True):
+	tableroJugador = []
+	tableroAtaqueJugador = []
+	tableroCPU = []
+	listaPosicionesOcupadas = []
+	jugar()
