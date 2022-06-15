@@ -1,0 +1,15 @@
+Portaviones:B4
+Portaviones:B5
+Portaviones:B6
+Portaviones:B7
+Portaviones:B8
+Battleship:A0
+Battleship:A1
+Battleship:A2
+Battleship:A3
+Crucero:G3
+Crucero:H3
+Crucero:I3
+Submarino:J8
+Submarino:J9
+Lancha:D5

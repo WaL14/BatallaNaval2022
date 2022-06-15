@@ -8,6 +8,7 @@ tableroCPU = []
 listaFilas = ["A","B","C","D","E","F","G","H","I","J"]
 listaColumnas = ["0","1","2","3","4","5","6","7","8","9"]
 listaPosicionesOcupadas = []
+lista_archivos_cpu = ["tableroCPU.txt","tableroCPU1.txt","tableroCPU2.txt"]
 
 
 
@@ -24,24 +25,65 @@ def llenar_tableros():
     #print(tableroAtaqueJugador)
     #print(tableroCPU)
 
-def leer_archivo_CPU():
-    fichero = open('tablero1.txt', 'r')
+def leer_archivo_CPU(nombre_archivo):
+    fichero = open(nombre_archivo, 'r')
     filas = fichero.readlines()
+    listaCPU = []
+    listaPosiciones = []
     i=0
-    j=0
     for fila in filas:
+        barco = ""
+        i=0
         for item in fila:
-            if item not in["P","L","S","C","0","B"]:
-                continue
+            if item != ":":
+                barco += item
+                i+=1
             else:
-                if item == "0":
-                    j+=1
-                    continue
-                else:
-                    tableroCPU[i][j] = item
-                    j+=1
-        j=0        
-        i+=1
+                if item == ":":
+                    listaCPU.append(barco)
+                    barco = ""
+                    barco += fila[i+1]
+                    barco += fila[i+2]
+                    listaPosiciones.append(barco)
+                    listaCPU.append(barco)
+    #print(listaPosiciones)
+    #print(listaCPU)
+    if len(listaPosiciones) != 15:
+        print("El archivo de configuracion para el CPU no contiene suficientes barcos o contiene mas de los permitidos, recuerde que deben ser 5 portaviones, 4 battleship, 3 cruceros, 2 submarinos y 1 lancha")
+        exit()
+    else:
+        ocurrenciasP = listaCPU.count("Portaviones")
+        ocurrenciasB = listaCPU.count("Battleship")
+        ocurrenciasC = listaCPU.count("Crucero")
+        ocurrenciasS = listaCPU.count("Submarino")
+        ocurrenciasL = listaCPU.count("Lancha")
+        if ocurrenciasP != 5:
+            print("Faltan o sobran posiciones para el portaviones")
+            exit()
+        elif ocurrenciasB != 4:
+            print("Faltan o sobran posiciones para el battleship")
+            exit()           
+        elif ocurrenciasC != 3:
+            print("Faltan o sobran posiciones para el crucero")
+            exit()           
+        elif ocurrenciasS != 2:
+            print("Faltan o sobran posiciones para el submarino")
+            exit()           
+        elif ocurrenciasL != 1:
+            print("Faltan o sobran posiciones para la lancha")
+            exit()
+    j = 0
+    k = 0
+    while(j < 15):
+        fila = ord(listaPosiciones[j][0]) - 65 
+        columna = int(listaPosiciones[j][1])
+        if tableroCPU[fila][columna] == 0:
+            tableroCPU[fila][columna] = "B"
+            j+=1
+        else:
+            print("Error: El archivo de tablero para CPU contiene la misma posicion en el tablero para dos fichas, Abortando juego")
+            exit()
+    #imprimir_tablero(tableroCPU)
 
 def pedir_portaviones():
     listaPortaviones = []
@@ -86,7 +128,7 @@ def pedir_battleship():
     if len(listaBattleship) != 4:
         print("El Battleship debe constar de 4 fichas en el tablero\n")
         listaBattleship = []
-        pedir_battleship()
+        pedir_battleship()    
     
     for item in listaBattleship:
         if item in listaPosicionesOcupadas:
@@ -181,8 +223,6 @@ def cargar_tablero_jugador():
     while i < len(listaPosicionesOcupadas):
         fila = ord(listaPosicionesOcupadas[i][0]) - 65 
         columna = int(listaPosicionesOcupadas[i][1])
-        print(fila)
-        print(columna)
         if i < 5:
             tableroJugador[fila][columna] = "P"
         if i >= 5 and i < 9:
@@ -266,7 +306,11 @@ def tablero_sin_barcos(tablero):
 
 def jugar():
 	llenar_tableros()
-	leer_archivo_CPU()
+	aleatorio = random.randint(0,2)
+	nombre_archivo = lista_archivos_cpu[aleatorio]
+	print("Leyendo archivo: " + nombre_archivo)
+	print("\nCargando tablero de CPU")
+	leer_archivo_CPU(nombre_archivo)
 	pedir_portaviones()
 	print("Posiciones ocupadas: ")
 	print(listaPosicionesOcupadas)	
@@ -322,4 +366,10 @@ while(True):
 	tableroAtaqueJugador = []
 	tableroCPU = []
 	listaPosicionesOcupadas = []
+
 	jugar()
+	seguir_jugando = input("Desea iniciar un juego nuevo? Digite la letra s para iniciar, cualquier otra letra para salir")
+	if seguir_jugando == "s" or seguir_jugando == "S":
+		continue
+	else:
+		exit()
